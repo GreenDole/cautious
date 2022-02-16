@@ -17,39 +17,39 @@ COMP
  * \param str Строка для вывода
  * \return Введённое число
  */
-int Input_integer(const string str);
+int input_integer(const string& str);
 /**
  * \brief Функция автоматически заполняет массив целыми числами от -1000 до 1000
  * \param array Передаваемый массив
  * \param size Размера массива
  */
-void Auto_fill(int* array, const size_t size);
+void auto_fill(int* array, const size_t size);
 /**
  * \brief Функция позволяет вручную заполнить массив
  * \param array Передаваемый массив
  * \param size Размер массива
  */
-void Manual_fill(int* array, const size_t size);
+void manual_fill(int* array, const size_t size);
 /**
  * \brief Функция ищет сумму отрицательных элементов, кратных 10-ти
  * \param array Передаваемый массив
  * \param size Размер массива
  * \return Сумму отрицательных элементов кратных 10-ти
  */
-int Find_neg10_sum(const int array[], const size_t size);
+int find_neg10_sum(const int* array, const size_t size);
 /**
  * \brief Функция меняет первые Х элементов на те же, но в обратном порядке
  * \param array Передаваемый массив
  * \param size Размер массива
  */
-void Change_k_elements(int* array, const size_t size);
+void change_k_elements(int* array, const size_t size);
 /**
  * \brief Функция проверяет массив на наличие пары соседних элементов, произведение которых равно заданному числу
  * \param array Передаваемый массив
  * \param size Размер массива
  * \return "true" если пара нашлась, "false" если такой пары нет
  */
-bool Check_pair(int* array, size_t size);
+bool check_pair(const int* array, const size_t size);
 /**
  * \brief Функция меняет местами две переменные типа int
  * \param first Первая переменная для замены
@@ -61,30 +61,30 @@ void Switch(int& first, int& second);
  * \param array Передаваемый массив
  * \param size Размер массива
  */
-void Show_array(const int array[], const size_t size);
+void show_array(const int* array, const size_t size);
 
 /**
  * \brief Точка входа в программу
  * \return 0 в случае успеха
  */
 int main() {
-    int size = Input_integer("Enter array size = ");
+    int size = input_integer("Enter array size = ");
     int* array = new int[size];
     cout << "How to output an array?\n" <<
         static_cast<int>(INPUT::USER) << " - Manually\n" <<
         static_cast<int>(INPUT::COMP) << " - Automatically\n";
-    int choose = Input_integer("");
+    int choose = input_integer("");
     try {
         auto choosed = static_cast<INPUT>(choose);
         switch (choosed) {
         case INPUT::COMP: {
-            Auto_fill(array, size);
-            Show_array(array, size);
+            auto_fill(array, size);
+            show_array(array, size);
             break;
         }
         case INPUT::USER: {
-            Manual_fill(array, size);
-            Show_array(array, size);
+            manual_fill(array, size);
+            show_array(array, size);
             break;
         }
         default: {
@@ -96,37 +96,43 @@ int main() {
     catch (out_of_range) {
         return 1;
     }
-    cout << "Sum of negative elements of multiples of 10 = " << Find_neg10_sum(array, size) << endl;
+    cout << "Sum of negative elements of multiples of 10 = " << find_neg10_sum(array, size) << endl;
     try {
-        Change_k_elements(array, size);
+        change_k_elements(array, size);
     }
     catch (out_of_range&) {
         cout << "Going beyond";
     }
     cout << "Is there a pair of neighboring elements in the array whose product is equal to the given one? ";
-    if (Check_pair(array, size)) {
+    if (check_pair(array, size)) {
         cout << "yes\n";
     }
     else {
         cout << "no\n";
     }
-    Show_array(array, size);
-    delete[] array;
+    show_array(array, size);
+
+    if (array != nullptr)
+    {
+        delete[] array;
+        array = nullptr;
+    }
 
     return 0;
 }
 
-int Input_integer(const string str) {
+int input_integer(const string& str) {
+    int size = -1;
     cout << str;
-    int temp = 0;
-    cin >> temp;
-    if (temp < 0) {
-        temp = 0;
+    cin >> size;
+    if (size < 0)
+    {
+        throw out_of_range("Incorrect size. Value has to be greater or equal zero.");
     }
-    return temp;
+    return size;
 }
 
-void Auto_fill(int* array, const size_t size) {
+void auto_fill(int* array, const size_t size) {
     random_device rd;
     mt19937 gen(rd());
     uniform_int_distribution<> uniformIntDistribution(-1000, 1000);
@@ -135,13 +141,13 @@ void Auto_fill(int* array, const size_t size) {
     }
 }
 
-void Manual_fill(int* array, const size_t size) {
+void manual_fill(int* array, const size_t size) {
     for (int i = 0; i < size; i++) {
         cin >> array[i];
     }
 }
 
-int Find_neg10_sum(const int array[], const size_t size) {
+int find_neg10_sum(const int* array, const size_t size) {
     int sum = 0;
     for (int i = 0; i < size; i++) {
         if (array[i] < 0 && abs(array[i]) % 10 == 0) {
@@ -151,10 +157,10 @@ int Find_neg10_sum(const int array[], const size_t size) {
     return sum;
 }
 
-void Change_k_elements(int* array, const size_t size) {
+void change_k_elements(int* array, const size_t size) {
     int number = 0;
     do {
-        number = Input_integer("Enter the number of items needed to replace =");
+        number = input_integer("Enter the number of items needed to replace =");
     } while (number > size);
     for (int i = 0; i < number; ) {
         for (int j = number - 1; j > 0; ) {
@@ -173,8 +179,8 @@ void Switch(int& first, int& second) {
     second = temp;
 }
 
-bool Check_pair(int* array, size_t size) {
-    int multi = Input_integer("Enter the required product = ");
+bool check_pair(int* array, size_t size) {
+    int multi = input_integer("Enter the required product = ");
     for (int i = 0; i < size - 1; i++) {
         if (array[i] * array[i + 1] == multi) {
             return true;
@@ -183,7 +189,7 @@ bool Check_pair(int* array, size_t size) {
     return false;
 }
 
-void Show_array(const int array[], const size_t size) {
+void show_array(const int* array, const size_t size) {
     cout << "Array: ";
     for (int i = 0; i < size; i++) {
         cout << array[i] << ' ';
