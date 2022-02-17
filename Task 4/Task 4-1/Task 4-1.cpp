@@ -177,7 +177,7 @@ void Switch(int& first, int& second) {
     second = temp;
 }
 
-bool check_pair(int* array, size_t size) {
+bool check_pair(const int* array, const size_t size) {
     int multi = input_integer("Enter the required product = ");
     for (int i = 0; i < size - 1; i++) {
         if (array[i] * array[i + 1] == multi) {
