@@ -162,16 +162,14 @@ void change_k_elements(int* array, const size_t size) {
     do {
         number = input_integer("Enter the number of items needed to replace =");
     } while (number > size);
-    for (int i = 0; i < number; ) {
-        for (int j = number - 1; j > 0; ) {
-            if (i < j) {
-                Switch(array[i], array[j]);
-            }
-            i++;
-            j--;
+    for (int i = 0; i < number / 2; i++) {
+        int temp;
+        temp = array[i];
+        array[i] = array[number - i];
+        array[number - i] = temp;
         }
     }
-}
+
 
 void Switch(int& first, int& second) {
     int temp = first;
